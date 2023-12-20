@@ -14,18 +14,26 @@ public class App
 {
     public static void main( String[] args )
     {
-        try{
+        try {
             Scanner scanner = new Scanner(System.in);
-            Socket s = new Socket("localhost", 3000);
-            BufferedReader inputDalServer = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            DataOutputStream outputVersoServer = new DataOutputStream(s.getOutputStream());
+            Socket socket = new Socket("localhost", 3000);
+            BufferedReader inputFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            DataOutputStream outputToServer = new DataOutputStream(socket.getOutputStream());
 
-            System.out.println(inputDalServer.readLine());
-            String richiesta = scanner.nextLine();
-            outputVersoServer.writeBytes(richiesta);
+            System.out.println("CLIENT CONNESSO");
 
-        }
-        catch(Exception e){
+            System.out.print("Inserisci la richiesta della risorsa: ");
+            String request = scanner.nextLine();
+            outputToServer.writeBytes("GET " + request + " HTTP/1.1\n\n");
+
+            String responseLine;
+            while ((responseLine = inputFromServer.readLine()) != null) {
+                System.out.println(responseLine);
+            }
+
+            socket.close();
+    }
+        catch (Exception e) {
             System.out.println("Errore di connessione");
             System.out.println(e.getMessage());
             System.exit(1);
